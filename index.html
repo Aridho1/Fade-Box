@@ -31,23 +31,34 @@ body {
   position: absolute;
   top: 50%;
   left: 100vw;
-  width: calc(200px * 6);
-  height: 200px;
+  
+  display: grid;
+  grid-template-columns: repeat(6, 200px);
+  grid-template-rows: 200px;
+  
   transform: translate(-100px, -50%);
-  background-color: blck;
-  gap: 10px;
-  transition: 1s;
+  transition: 2s;
 }
 
 .box {
-  float: left;
-  width: 200px;
-  height: 200px;
-  position: absolute;
-  transition: 5s;
-  margin-left: calc( (var(--pos) - 1) * 200px );
+  transition: 2s;
   z-index: var(--pos);
-  border: 1px solid black;
+  border: 1px olid black;
+  box-shadow: 0 0 3px rgba(0,0,0,.7);
+}
+
+.box.to-jumb {
+  animation: to-jumb 3s linear 1 forwards;
+}
+
+@keyframes to-jumb {
+  from {
+    transform: scale(1);
+  }
+  
+  to {
+    transform: scale(10);
+  }
 }
 
 .box-1 {
@@ -74,10 +85,6 @@ body {
   background-color: yellow;
 }
 
-.box.to-jumb {
-  transform: scale(10);
-}
-
 
 
 .content {
@@ -92,15 +99,7 @@ body {
 }
 
 
-@keyframes to-jumb {
-  from {
-    
-  }
-  
-  to {
-    
-  }
-}
+
 
   </style>
 </head>
@@ -134,6 +133,13 @@ document.addEventListener("DOMContentLoaded", e => {
   
   document.body.addEventListener("click", e => {
     
+    if ( x == num ) {
+      
+      window.location.reload();
+      return false;
+      
+    }
+    
     x += 1;
     
     if ( e.target.classList.contains("click-me") ) {
@@ -145,25 +151,31 @@ document.addEventListener("DOMContentLoaded", e => {
       
       setTimeout(() => {
         
-        
+        /*
         document.querySelectorAll(".box")
           .forEach((el, i) => {
             i += 1;
-            console.error((i - 1) * 200);
-            console.log((i - 1 - x) * 200);
+            
             el.style.margin = `0 0 0 ${
               (i - 1 - x) * 200
             }px`;
           })
         ;
+        */
         
+        document.querySelector(".boxs")
+          .style.margin = `0 0 0 -${
+            (x) * 200
+          }px`;
         
-        console.log(
-          document.querySelector(".box")
-            .parentElement.innerHTML
-        );
         
       }, 2000);
+      
+      if ( x == num ) {
+        
+        e.target.innerHTML = "Refresh"
+        
+      }
       
     }
     
