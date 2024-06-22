@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Fade Box</title>
+  <style>
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  overflow: hidden;
+  width: 200vw;
+  height: 200vh;
+}
+
+.container {
+  font-size: 2em;
+  width: 100vw;
+  height: 100vh;
+  background-color: #eaeaff;
+  
+  overflow: hiden;
+  position: relative;
+  z-index: 1;
+}
+
+.boxs {
+  position: absolute;
+  top: 50%;
+  left: 100vw;
+  width: calc(200px * 6);
+  height: 200px;
+  transform: translate(-100px, -50%);
+  background-color: blck;
+  gap: 10px;
+  transition: 1s;
+}
+
+.box {
+  float: left;
+  width: 200px;
+  height: 200px;
+  position: absolute;
+  transition: 5s;
+  margin-left: calc( (var(--pos) - 1) * 200px );
+  z-index: var(--pos);
+  border: 1px solid black;
+}
+
+.box-1 {
+  background-color: aqua;
+}
+
+.box-2 {
+  background-color: violet;
+}
+
+.box-3 {
+  background-color: lightskyblue;
+}
+
+.box-4 {
+  background-color: brown;
+}
+
+.box-5 {
+  background-color: red;
+}
+
+.box-6 {
+  background-color: yellow;
+}
+
+.box.to-jumb {
+  transform: scale(10);
+}
+
+
+
+.content {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translate(-50%, 0);
+}
+
+.content button {
+  padding: 4px;
+}
+
+
+@keyframes to-jumb {
+  from {
+    
+  }
+  
+  to {
+    
+  }
+}
+
+  </style>
+</head>
+<body>
+  
+  <div class="container">
+    
+    <div class="boxs">
+      <div class="box box-1" style="--pos:1"></div>
+      <div class="box box-2" style="--pos:2"></div>
+      <div class="box box-3" style="--pos:3"></div>
+      <div class="box box-4" style="--pos:4"></div>
+      <div class="box box-5" style="--pos:5"></div>
+      <div class="box box-6" style="--pos:6"></div>
+    </div>
+    
+    <div class="content">
+      <button class="click-me">Click Me!</button>
+    </div>
+    
+  </div>
+  
+<script>
+
+let x = 0;
+let num = 0;
+
+document.addEventListener("DOMContentLoaded", e => {
+  
+  num = document.querySelectorAll(".box").length;
+  
+  document.body.addEventListener("click", e => {
+    
+    x += 1;
+    
+    if ( e.target.classList.contains("click-me") ) {
+      
+      document.querySelector(`.box-${ x }`)
+        .classList.add("to-jumb");
+      
+      //num -= 1;
+      
+      setTimeout(() => {
+        
+        
+        document.querySelectorAll(".box")
+          .forEach((el, i) => {
+            i += 1;
+            console.error((i - 1) * 200);
+            console.log((i - 1 - x) * 200);
+            el.style.margin = `0 0 0 ${
+              (i - 1 - x) * 200
+            }px`;
+          })
+        ;
+        
+        
+        console.log(
+          document.querySelector(".box")
+            .parentElement.innerHTML
+        );
+        
+      }, 2000);
+      
+    }
+    
+  });
+  
+});
+
+</script>
+</body>
+</html>
+
+
+
