@@ -1,9 +1,24 @@
+<!-- 
+  
+  Do Not Delete And/Or Change Code. 
+  
+  Otherwise its make an errors.
+  
+  Except Change Value 'colors' In script
+  
+ -->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>Fade Box</title>
   <style>
+
+:root {
+  --box-size-num: 50;
+  --box-size: calc( var(--box-size-num) * 1vw );
+}
 
 * {
   margin: 0;
@@ -16,12 +31,12 @@ body {
 }
 
 .container {
-  font-size: 2em;
+  font-size: clamp(20px, 4vw, 40px);
   width: 100vw;
   height: 100vh;
   background-color: #eaeaff;
   
-  overflow: hiden;
+  overflow: hidden;
   position: relative;
   z-index: 1;
 }
@@ -32,10 +47,16 @@ body {
   left: 100vw;
   
   display: grid;
-  grid-template-columns: repeat(6, 200px);
-  grid-template-rows: 200px;
+  grid-template-columns: 
+    repeat(var(--qty), var(--box-size));
+  grid-template-rows: var(--box-size);
   
-  transform: translate(-100px, -50%);
+  transform: 
+    translate( 
+      calc( var(--box-size) / 2 * -1 ),
+      -50% 
+    )
+  ;
   transition: 2s;
 }
 
@@ -56,35 +77,9 @@ body {
   }
   
   to {
-    transform: scale(10);
+    transform: scale(calc( 1000% ));
   }
 }
-
-.box-1 {
-  background-color: aqua;
-}
-
-.box-2 {
-  background-color: violet;
-}
-
-.box-3 {
-  background-color: lightskyblue;
-}
-
-.box-4 {
-  background-color: brown;
-}
-
-.box-5 {
-  background-color: red;
-}
-
-.box-6 {
-  background-color: yellow;
-}
-
-
 
 .content {
   position: absolute;
@@ -94,15 +89,23 @@ body {
 }
 
 .content button {
-  padding: 4px;
+  padding: clamp(4px, 2vh, 12px);
+  cursor: pointer;
 }
 
 
-
+@media (width > 678px) {
+  .content {
+    bottom: 50%;
+  }
+}
 
   </style>
 </head>
 <body>
+
+<!-- This is example Result for config.createCongainerBody methode -->
+
 <!-- 
   <div class="container">
     
@@ -123,95 +126,154 @@ body {
     -->
 <script>
 
-let x = 0;
-let num = 0;
+let num_boxActive;
+
+// change list color by our favorite colors
+// you can fill by any valid color ccs
+// like colorName, Hexa, rgba, etc..
+// and alao you can change quantity | total colors.
 
 const colors = [
-  "aqua",
+  "blue",
+  "purple",
+  "green",
+  "#ccc",
   "violet",
   "lightskyblue",
+  "rgba(255,255,255,1)",
   "brown",
   "red",
-  "yellow"
+  "yellow",
+  "#eaeaea",
+  "#ddd",
+  "#eeee"
 ];
 
-const createBoxs = () => {
+const box_size = getComputedStyle(
+  document.documentElement
+).getPropertyValue("--box-size-num");
+
+// fn to config all content
+const config = {
+  colors,
   
-  const boxs = document.createElement("div");
-  boxs.setAttribute("class", "boxs");
-  
-  colors.map((color, i) => {
+  getContent() {
     
-    i += 1;
+    const button = document.createElement("button");
+    button.classList.add("click-me");
+    button.innerText = "Click Me";
     
-    const box = document.createElement("div");
-    box.classList.add("box");
-    box.classList.add(`box-${ i }`);
-    box.style.setProperty("--pos", i);
+    const content = document.createElement("div");
+    content.classList.add("content");
+  
+    content.appendChild(button);
     
-    boxs.appendChild(box);
+    return content;
+  },
+  
+  getBoxs() {
     
-  });
+    const boxs = document.createElement("div");
+    boxs.setAttribute("class", "boxs");
+    boxs.style.setProperty("--qty", this.colors.length);
+    
+    this.colors.map((color, i) => {
+      
+      const box = document.createElement("div");
+      box.classList.add("box");
+      box.classList.add(`box-${ i + 1 }`);
+      box.style.setProperty("--pos", i + 1);
+      box.style.backgroundColor = this.colors[i];
+        
+      boxs.appendChild(box);
+      
+    });
+    
+    return boxs;
+  },
   
-  const container = document.createElement("div");
-  container.setAttribute("class", "container");
+  createContainerBody() {
+    
+    const container = document.createElement("div");
+    container.setAttribute("class", "container");
+    
+    container.appendChild(this.getBoxs());
+    
+    container.appendChild(this.getContent());
+    
+    const duplicateContainer = document
+      .querySelector(".container");
+    
+    if ( duplicateContainer ) duplicateContainer.remove();
+    
+    document.body.appendChild(container);
+    
+    num_boxActive = 0;
+    
+    console.log("Success To Create New Container");
+  }
   
-  container.appendChild(boxs);
-  
-  const button = document.createElement("button");
-  button.classList.add("click-me");
-  button.innerText = "Click Me";
-  
-  const content = document.createElement("div");
-  content.classList.add("content");
-  
-  content.appendChild(button);
-  
-  container.appendChild(content);
-  
-  document.body.appendChild(container);
-  
-  
-  //console.log(document.body.innerHTML);
-  
-};
+}; // ←← end fn config
 
 
+// fn to resize box by scale 10
+const zoomBox = () => {
+  
+  // re-create container
+  if ( num_boxActive == colors.length ) {
+    
+    config.createContainerBody();
+    return false;
+    
+  // change 'Click-Me' to 'Refresh'
+  } else if ( num_boxActive == colors.length - 1 ) {
+    
+    document.querySelector(".click-me")
+      .innerHTML = "Refresh";
+    
+  }
+  
+  // add value by 1
+  num_boxActive += 1;
+  const x = num_boxActive;
+  
+  // select box by x and set class to-jumb
+  document.querySelector(`.box-${ x }`)
+    .classList.add("to-jumb");
+  
+  // select boxs and make them position to left
+  setTimeout(() => {
+    
+    document.querySelector(".boxs")
+      .style.margin = 
+        //`0 0 0 -${ x * 200 }px`;
+        `0 0 0 -${ x * box_size }vw`;
+    
+  }, 1250);
+  
+}; // ←← end fn zoomBox
+
+
+// wait to maxsure all content is add to memory
 document.addEventListener("DOMContentLoaded", e => {
   
-  createBoxs();
+  config.createContainerBody();
   
-  num = document.querySelectorAll(".box").length;
-  
+  // event delegation body -- click
   document.body.addEventListener("click", e => {
     
-    if ( x == num ) window.location.reload();
-    
-    x += 1;
-    
+    // handle click-me
     if ( e.target.classList.contains("click-me") ) {
       
-      document.querySelector(`.box-${ x }`)
-        .classList.add("to-jumb");
+      // exec fn zoom when user click el click-me
+      zoomBox();
       
-      setTimeout(() => {
-        
-        document.querySelector(".boxs")
-          .style.margin = `0 0 0 -${ x * 200 }px`;
-        
-      }, 2000);
-      
-      if ( x == num ) e.target.innerHTML = "Refresh";
-      
-    }
+    } // ←← end handle click-me
     
-  });
+  }); // ←← end event delegation
   
-});
+}); // ←← end DOM
 
 </script>
 </body>
 </html>
-
-
-
